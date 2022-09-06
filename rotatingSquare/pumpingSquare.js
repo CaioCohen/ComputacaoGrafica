@@ -48,7 +48,8 @@ var w;
  */
 var h;
 var sentido = true;
-var angle = 0.05;
+var angle = 0.034;
+var angleTotal = 0;
 var increment = 0.03;
 var centro;
 /**
@@ -64,15 +65,15 @@ function mapToViewport(x, y, n = 5) {
     return [((x + n / 2) * w) / n, ((-y + n / 2) * h) / n];
 }
 
-function setPosicao(x,y,i){
+function setPosicao(x, y, i) {
     let j = (i % numPoints) * 2;
     posicoes[j] = x;
     posicoes[j + 1] = y;
 }
 
-function getPosicao(i){
+function getPosicao(i) {
     let j = (i % numPoints) * 2;
-    return [posicoes[j], posicoes[j + 1]]; 
+    return [posicoes[j], posicoes[j + 1]];
 }
 
 
@@ -86,15 +87,15 @@ function getVertex(i) {
     return [vertices[j], vertices[j + 1]];
 }
 
-function rodar(x, y, angle) {
+function rodar(x, y, angle, center) {
     let xf;
     let yf;
-    x -= centro[0]
-    y -= centro[1]
+    x -= center[0]
+    y -= center[1]
     xf = Math.cos(angle) * x - Math.sin(angle) * y;//Transformação linear de rotação horária
     yf = Math.sin(angle) * x + Math.cos(angle) * y;
-    xf += centro[0];
-    yf += centro[1];
+    xf += center[0];
+    yf += center[1];
     return [xf, yf];
 }
 
@@ -129,15 +130,16 @@ document.addEventListener('keydown', (event) => {
 function draw(ctx, angle, center) {
     ctx.fillStyle = "rgba(0, 204, 204, 1)";
     ctx.rect(0, 0, w, h);
+    let cores = ["green", "blue", "white", "red"];
     ctx.fill();
-
+    angleTotal += angle;
     ctx.beginPath();
     for (let i = 0; i < numPoints; i++) {
         if (i == 3 || i == 4) continue;
-        let [x, y] = getPosicao(i)       
-        let xf = rodar(x, y, angle)[0];
-        let yf = rodar(x, y, angle)[1];
-        setPosicao(xf,yf,i);
+        let [x, y] = getPosicao(i)
+        let xf = rodar(x, y, angle,centro)[0];
+        let yf = rodar(x, y, angle,centro)[1];
+        setPosicao(xf, yf, i);
         if (i == 0) ctx.moveTo(xf, yf);
         else ctx.lineTo(xf, yf);
     }
@@ -146,6 +148,28 @@ function draw(ctx, angle, center) {
     // the fill color
     ctx.fillStyle = "red";
     ctx.fill();
+
+    ctx.beginPath();
+    for (let j = 0; j < numPoints; j++) {
+        if (j == 3 || j == 4) continue;
+        let [x, y] = getPosicao(j)
+        let xf = rodar(x, y, angle,centro)[0];
+        let yf = rodar(x, y, angle,centro)[1];
+        ctx.moveTo(xf, yf);
+        let cent = [xf,yf];
+        [x,y]=rodar(xf+10,yf,angleTotal,cent);
+        ctx.lineTo(x,y);
+        [x,y]=rodar(xf+10,yf+10,angleTotal,cent);
+        ctx.lineTo(x,y);
+        [x,y]=rodar(xf,yf+10,angleTotal,cent);
+        ctx.lineTo(x,y);
+        ctx.fillStyle = cores[j];
+        ctx.fill();
+    }
+
+
+
+    ctx.closePath();
 }
 
 /**
@@ -163,16 +187,16 @@ function mainEntrance() {
     w = canvasElement.width;
     h = canvasElement.height;
     centro = mapToViewport(...getVertex(5));
-    for(let i = 0; i < numPoints; i++){
+    for (let i = 0; i < numPoints; i++) {
         let [x, y] = mapToViewport(...getVertex(i));
-        setPosicao(x,y,i);
-    } 
-       /**
-     * A closure to set up an animation loop in which the
-     * scale grows by "increment" each frame.
-     * @global
-     * @function
-     */
+        setPosicao(x, y, i);
+    }
+    /**
+  * A closure to set up an animation loop in which the
+  * scale grows by "increment" each frame.
+  * @global
+  * @function
+  */
     var runanimation = (() => {
         //var scale = 1.0;
 
