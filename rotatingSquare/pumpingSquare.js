@@ -116,13 +116,13 @@ document.addEventListener('keydown', (event) => {
             centro = getPosicao(5);
             break;
         case ("g"):
-            centro = getPosicao(2);
+            centro = getPosicao(0);
             break;
         case ("b"):
             centro = getPosicao(1);
             break;
         case ("w"):
-            centro = getPosicao(0);
+            centro = getPosicao(2);
             break;
     }
 }, false);
@@ -130,7 +130,7 @@ document.addEventListener('keydown', (event) => {
 function draw(ctx, angle, center) {
     ctx.fillStyle = "rgba(0, 204, 204, 1)";
     ctx.rect(0, 0, w, h);
-    let cores = ["green", "blue", "white", "red"];
+    let cores = ["green", "blue", "white", "red","red","red"];
     ctx.fill();
     angleTotal += angle;
     ctx.beginPath();
@@ -146,29 +146,55 @@ function draw(ctx, angle, center) {
     ctx.closePath();
 
     // the fill color
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "purple";
     ctx.fill();
 
-    ctx.beginPath();
     for (let j = 0; j < numPoints; j++) {
+        ctx.beginPath();
         if (j == 3 || j == 4) continue;
-        let [x, y] = getPosicao(j)
-        let xf = rodar(x, y, angle,centro)[0];
-        let yf = rodar(x, y, angle,centro)[1];
+        let [xf, yf] = getPosicao(j);
+        let x;
+        let y;
         ctx.moveTo(xf, yf);
         let cent = [xf,yf];
-        [x,y]=rodar(xf+10,yf,angleTotal,cent);
-        ctx.lineTo(x,y);
-        [x,y]=rodar(xf+10,yf+10,angleTotal,cent);
-        ctx.lineTo(x,y);
-        [x,y]=rodar(xf,yf+10,angleTotal,cent);
-        ctx.lineTo(x,y);
+        switch(j){
+            case(0):
+                [x,y]=rodar(xf+10,yf,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf+10,yf-10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf,yf-10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                break;
+            case(1):
+                [x,y]=rodar(xf-10,yf,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf-10,yf-10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf,yf-10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                break;
+            case(2):
+                [x,y]=rodar(xf-10,yf,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf-10,yf+10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf,yf+10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                break;
+            case(5):
+                [x,y]=rodar(xf+10,yf,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf+10,yf+10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                [x,y]=rodar(xf,yf+10,angleTotal,cent);
+                ctx.lineTo(x,y);
+                break;
+        }
         ctx.fillStyle = cores[j];
         ctx.fill();
+        ctx.closePath();
     }
-
-
-
     ctx.closePath();
 }
 
