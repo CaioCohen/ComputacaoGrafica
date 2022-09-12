@@ -1,17 +1,3 @@
-// cuon-matrix.js (c) 2012 kanda and matsuda
-/** 
- * This is a class treating 4x4 matrix.
- * This class contains the function that is equivalent to OpenGL matrix stack.
- * The matrix after conversion is calculated by multiplying a conversion matrix from the right.
- * The matrix is replaced by the calculated result.
- */
-
-/**
- * Constructor of Matrix4
- * If opt_src is specified, new matrix is initialized by opt_src.
- * Otherwise, new matrix is initialized by identity matrix.
- * @param opt_src source matrix(option)
- */
 var Matrix4 = function(opt_src) {
   var i, s, d;
   if (opt_src && typeof opt_src === 'object' && opt_src.hasOwnProperty('elements')) {

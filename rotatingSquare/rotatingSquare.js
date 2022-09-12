@@ -1,25 +1,6 @@
-/**
- * @file
- *
- * Summary.
- *
- * Vertices are scaled by an amount that varies by
- * frame, and this value is passed to the draw function.
- *
- * @author Paulo Roma
- * @since 17/08/2022
- * @see https://orion.lcg.ufrj.br/cs336/examples/example123/content/GL_example3a.html
- */
 
 "use strict";
 
-/**
- * Raw data for some point positions -
- * this will be a square, consisting of two triangles.
- * <p>We provide two values per vertex for the x and y coordinates
- * (z will be zero by default).</p>
- * @type {Float32Array}
- */
 var vertices = new Float32Array([
     -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5,
 ]);
@@ -87,13 +68,13 @@ function getVertex(i) {
     return [vertices[j], vertices[j + 1]];
 }
 
-function rodar(x, y, angle, center) {
+function rodar(x, y, a, center) {
     let xf;
     let yf;
     x -= center[0]
     y -= center[1]
-    xf = Math.cos(angle) * x - Math.sin(angle) * y;//Transformação linear de rotação horária
-    yf = Math.sin(angle) * x + Math.cos(angle) * y;
+    xf = Math.cos(a) * x - Math.sin(a) * y;//Transformação linear de rotação horária
+    yf = Math.sin(a) * x + Math.cos(a) * y;
     xf += center[0];
     yf += center[1];
     return [xf, yf];
@@ -127,7 +108,7 @@ document.addEventListener('keydown', (event) => {
     }
 }, false);
 
-function draw(ctx, angle, center) {
+function draw(ctx, a, center) {
     ctx.fillStyle = "rgba(0, 204, 204, 1)";
     ctx.rect(0, 0, w, h);
     let cores = ["green", "blue", "white", "red","red","red"];
@@ -137,11 +118,17 @@ function draw(ctx, angle, center) {
     for (let i = 0; i < numPoints; i++) {
         if (i == 3 || i == 4) continue;
         let [x, y] = getPosicao(i)
-        let xf = rodar(x, y, angle,centro)[0];
-        let yf = rodar(x, y, angle,centro)[1];
+        let xf = rodar(x, y, a,centro)[0];
+        let yf = rodar(x, y, a,centro)[1];
+        if(xf < 0 || xf > 400 || yf < 0 || yf > 400){
+            angle = -angle;
+        }
+        // xf = rodar(x, y, angle,centro)[0];
+        // yf = rodar(x, y, angle,centro)[1];
         setPosicao(xf, yf, i);
         if (i == 0) ctx.moveTo(xf, yf);
         else ctx.lineTo(xf, yf);
+        
     }
     ctx.closePath();
 
