@@ -226,6 +226,8 @@ function getChar(event) {
  * Adjusts object rotations.
  * @param {KeyboardEvent} event key pressed.
  */
+var arc = false;
+
 function handleKeyPress(event) {
     var ch = getChar(event);
     switch (ch) {
@@ -283,6 +285,9 @@ function handleKeyPress(event) {
                 .translate(0, -5, 0);
             leftLegMatrix.setTranslate(-2, -11, 0).multiply(currentLegsRot);
             rightLegMatrix.setTranslate(2, -11, 0).multiply(currentLegsRot);
+            break;
+        case " ":
+            this.arc = !this.arc;
             break;
         default:
             return;
@@ -419,6 +424,9 @@ function draw() {
         console.log("Warning: pops do not match pushes");
     }
 }
+var canvas = document.getElementById("theCanvas");
+
+var rotator = new SimpleRotator(canvas, animate);
 
 /**
  * <p>Entry point when page is loaded.</p>
@@ -432,13 +440,20 @@ function draw() {
  * @global
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event
  */
+ var animate = function () {
+    draw();
+    requestAnimationFrame(animate, canvas);
+    if(arc){
+        torsoMatrix.elements = rotator.getViewMatrix();
+    }
+};
+
 window.addEventListener("load", (event) => {
     console.log("hahaha")
-    // retrieve <canvas> element
-    var canvas = document.getElementById("theCanvas");
 
     // key handler
     window.onkeypress = handleKeyPress;
+    
 
     // get the rendering context for WebGL, using the utility from the teal book
     gl = getWebGLContext(canvas);
@@ -482,10 +497,7 @@ window.addEventListener("load", (event) => {
     gl.enable(gl.DEPTH_TEST);
 
     // define an animation loop
-    var animate = function () {
-        draw();
-        requestAnimationFrame(animate, canvas);
-    };
+    
 
     // start drawing!
     animate();
